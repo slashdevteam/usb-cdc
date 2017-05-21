@@ -248,6 +248,16 @@ int32_t DeviceClass::setSpeed(uint8_t speed)
     return cdcAcm->setSpeed(speed);
 }
 
+int32_t DeviceClass::send(uint8_t* buffer, uint32_t length)
+{
+    return cdcAcm->send(buffer, length);
+}
+
+int32_t DeviceClass::recv(uint8_t* buffer, uint32_t length)
+{
+    return cdcAcm->recv(buffer, length);
+}
+
 void DeviceClass::echo()
 {
     cdcAcm->echo();

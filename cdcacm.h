@@ -178,6 +178,9 @@ public:
     int32_t deviceCallback(class_handle_t handle, uint32_t event, void* param);
     int32_t setSpeed(uint8_t speed);
 
+    int32_t send(uint8_t* buffer, uint32_t length);
+    int32_t recv(uint8_t* buffer, uint32_t length);
+
     void echo();
 
 private:

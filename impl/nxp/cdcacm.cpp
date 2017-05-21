@@ -823,6 +823,26 @@ int32_t CdcAcm::setSpeed(uint8_t speed)
     return kStatus_USB_Success;
 }
 
+int32_t CdcAcm::send(uint8_t* buffer, uint32_t length)
+{
+    int32_t error = kStatus_USB_Success;
+    if((1 == cdcVcom.attach))
+    {
+        error = send((class_handle_t)&cdcAcmHandle, USB_CDC_VCOM_BULK_IN_ENDPOINT, buffer, length);
+        // block till end of operation
+        while(cdcAcmHandle.bulkIn.isBusy);
+    }
+    return error;
+}
+
+int32_t CdcAcm::recv(uint8_t* buffer, uint32_t length)
+{
+   return recv(reinterpret_cast<uint32_t>(&cdcAcmHandle),
+               USB_CDC_VCOM_BULK_OUT_ENDPOINT,
+               buffer,
+               length);
+}
+
 void CdcAcm::echo()
 {
     if((0 != recvSize) && (0xFFFFFFFFU != recvSize))

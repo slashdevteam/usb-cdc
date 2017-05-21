@@ -96,6 +96,9 @@ public:
     int32_t deviceCallback(usb_device_handle handle, uint32_t _event, void* param);
     int32_t setSpeed(uint8_t speed);
 
+    int32_t send(uint8_t* buffer, uint32_t length);
+    int32_t recv(uint8_t* buffer, uint32_t length);
+
     void echo();
 
 private:
