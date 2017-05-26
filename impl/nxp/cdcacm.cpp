@@ -3,6 +3,8 @@
 #include "usb_device.h"
 #include "usb_spec.h"
 
+#include <cstring>
+
 #define USB_CDC_ACM_ENTER_CRITICAL() \
     \
 USB_OSA_SR_ALLOC();                  \
@@ -79,6 +81,7 @@ CdcAcm::CdcAcm(uint8_t controllerId,
     config{interfaceList, kUSB_DeviceClassTypeCdc, USB_DEVICE_CONFIGURATION_COUNT},
     cdcAcmConfig{nullptr, (class_handle_t)&cdcAcmHandle, &config}
 {
+    std::memset(&cdcAcmHandle, 0, sizeof(cdcAcmHandle));
     cdcAcmHandle.configStruct = &cdcAcmConfig[0];
     cdcAcmHandle.configuration = 0;
     cdcAcmHandle.alternate = 0xFF;
@@ -826,7 +829,7 @@ int32_t CdcAcm::setSpeed(uint8_t speed)
 int32_t CdcAcm::send(uint8_t* buffer, uint32_t length)
 {
     int32_t error = kStatus_USB_Success;
-    if((1 == cdcVcom.attach))
+    if((1 == cdcVcom.attach) && (1 == cdcVcom.startTransactions))
     {
         error = send((class_handle_t)&cdcAcmHandle, USB_CDC_VCOM_BULK_IN_ENDPOINT, buffer, length);
         // block till end of operation
