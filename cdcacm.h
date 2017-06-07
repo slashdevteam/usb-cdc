@@ -88,17 +88,17 @@
 enum usb_device_cdc_acm_event_t
 {
     kUSB_DeviceCdcEventSendResponse = 0x01,
-    kUSB_DeviceCdcEventRecvResponse,
-    kUSB_DeviceCdcEventSerialStateNotif,
-    kUSB_DeviceCdcEventSendEncapsulatedCommand,
-    kUSB_DeviceCdcEventGetEncapsulatedResponse,
-    kUSB_DeviceCdcEventSetCommFeature,
-    kUSB_DeviceCdcEventGetCommFeature,
-    kUSB_DeviceCdcEventClearCommFeature,
-    kUSB_DeviceCdcEventGetLineCoding,
-    kUSB_DeviceCdcEventSetLineCoding,
-    kUSB_DeviceCdcEventSetControlLineState,
-    kUSB_DeviceCdcEventSendBreak
+    kUSB_DeviceCdcEventRecvResponse, //2
+    kUSB_DeviceCdcEventSerialStateNotif, //3
+    kUSB_DeviceCdcEventSendEncapsulatedCommand, //4
+    kUSB_DeviceCdcEventGetEncapsulatedResponse, //5
+    kUSB_DeviceCdcEventSetCommFeature, //6
+    kUSB_DeviceCdcEventGetCommFeature, //7
+    kUSB_DeviceCdcEventClearCommFeature, //8
+    kUSB_DeviceCdcEventGetLineCoding, //9
+    kUSB_DeviceCdcEventSetLineCoding, //10
+    kUSB_DeviceCdcEventSetControlLineState, //11
+    kUSB_DeviceCdcEventSendBreak //12
 } ;
 
 struct usb_device_cdc_acm_request_param_struct_t
@@ -114,7 +114,7 @@ struct usb_device_cdc_acm_pipe_t
 {
     usb_osa_mutex_handle mutex;
     uint8_t ep;
-    uint8_t isBusy;
+    volatile uint8_t isBusy;
 };
 
 struct usb_device_cdc_acm_struct_t

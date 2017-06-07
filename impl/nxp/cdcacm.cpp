@@ -829,7 +829,9 @@ int32_t CdcAcm::setSpeed(uint8_t speed)
 int32_t CdcAcm::send(uint8_t* buffer, uint32_t length)
 {
     int32_t error = kStatus_USB_Success;
-    if((1 == cdcVcom.attach) && (1 == cdcVcom.startTransactions))
+    if((usbCdcAcmInfo.uartState & USB_DEVICE_CDC_UART_STATE_TX_CARRIER)
+        && (1 == cdcVcom.attach)
+        && (1 == cdcVcom.startTransactions))
     {
         error = send((class_handle_t)&cdcAcmHandle, USB_CDC_VCOM_BULK_IN_ENDPOINT, buffer, length);
         // block till end of operation
