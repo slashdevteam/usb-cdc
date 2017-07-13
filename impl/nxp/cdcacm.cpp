@@ -548,12 +548,6 @@ int32_t CdcAcm::callback(class_handle_t handle, uint32_t event, void *param)
                 {
                     if((epCbParam->buffer != nullptr) || ((epCbParam->buffer == nullptr) && (epCbParam->length == 0)))
                     {
-                        /* User: add your own code for send complete event */
-                        /* Schedule buffer for next receive event */
-                        error = recv(handle,
-                                     USB_CDC_VCOM_BULK_OUT_ENDPOINT,
-                                     currRecvBuf,
-                                     dicEndpoints[0].maxPacketSize);
 #if defined(FSL_FEATURE_USB_KHCI_KEEP_ALIVE_ENABLED) && (FSL_FEATURE_USB_KHCI_KEEP_ALIVE_ENABLED > 0U) && \
     defined(USB_DEVICE_CONFIG_KEEP_ALIVE_MODE) && (USB_DEVICE_CONFIG_KEEP_ALIVE_MODE > 0U) &&             \
     defined(FSL_FEATURE_USB_KHCI_USB_RAM) && (FSL_FEATURE_USB_KHCI_USB_RAM > 0U)
@@ -828,7 +822,7 @@ int32_t CdcAcm::setSpeed(uint8_t speed)
 
 int32_t CdcAcm::send(uint8_t* buffer, uint32_t length)
 {
-    int32_t error = kStatus_USB_Success;
+    int32_t error = kStatus_USB_Error;
     if((usbCdcAcmInfo.uartState & USB_DEVICE_CDC_UART_STATE_TX_CARRIER)
         && (1 == cdcVcom.attach)
         && (1 == cdcVcom.startTransactions))
@@ -842,10 +836,35 @@ int32_t CdcAcm::send(uint8_t* buffer, uint32_t length)
 
 int32_t CdcAcm::recv(uint8_t* buffer, uint32_t length)
 {
-   return recv(reinterpret_cast<uint32_t>(&cdcAcmHandle),
-               USB_CDC_VCOM_BULK_OUT_ENDPOINT,
-               buffer,
-               length);
+    int32_t error = kStatus_USB_Error;
+    if((usbCdcAcmInfo.uartState & USB_DEVICE_CDC_UART_STATE_RX_CARRIER)
+        && (1 == cdcVcom.attach)
+        && (1 == cdcVcom.startTransactions))
+    {
+        // shedule receive if not already done
+        if(!recvSize)
+        {
+            recv((class_handle_t)&cdcAcmHandle,
+                 USB_CDC_VCOM_BULK_OUT_ENDPOINT,
+                 currRecvBuf,
+                 dicEndpoints[0].maxPacketSize);
+        }
+        // block till operation ongoing
+        while(cdcAcmHandle.bulkOut.isBusy);
+        if((0 != recvSize) && (0xFFFFFFFFU != recvSize))
+        {
+            uint32_t i;
+
+            /* Copy Buffer to Send Buff */
+            for(i = 0; i < length; i++)
+            {
+                buffer[i] = currRecvBuf[i];
+            }
+            recvSize = 0;
+        }
+
+    }
+    return (kStatus_USB_Success == error) ? length : error;
 }
 
 void CdcAcm::echo()
