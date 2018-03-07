@@ -776,6 +776,7 @@ int32_t CdcAcm::deviceCallback(class_handle_t handle, uint32_t event, void *para
                      currRecvBuf,
                      dicEndpoints[0].maxPacketSize);
             }
+            break;
         case kUSB_DeviceEventSetInterface:
             if(cdcVcom.attach)
             {
