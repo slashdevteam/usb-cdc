@@ -57,8 +57,6 @@ DeviceClass::DeviceClass(uint8_t _controllerId,
     gHandle = classHandle->handle;
     gDeviceClass = this;
 
-    SystemCoreClockUpdate();
-
     NVIC_SetPriority((IRQn_Type)USB0_IRQn, USB_DEVICE_INTERRUPT_PRIORITY);
     NVIC_EnableIRQ(USB0_IRQn);
 }
