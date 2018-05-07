@@ -1,4 +1,10 @@
 /*
+ * This code is adapted from usb_device_cdc_vcom example application
+ * from NXP SDK_2.2_MK24FN1M0xxx12
+ *
+ * Adaptations: Copyright (c) 2018 Slashdev SDG UG
+ *
+ * Original copyright:
  * Copyright (c) 2015, Freescale Semiconductor, Inc.
  * Copyright 2016 NXP
  *
